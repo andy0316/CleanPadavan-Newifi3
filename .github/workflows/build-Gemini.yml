@@ -152,7 +152,7 @@ jobs:
         sed -i '/CONFIG_FIRMWARE_INCLUDE_WIFI_KVR/d' .config
         echo "CONFIG_FIRMWARE_INCLUDE_WIFI_KVR=y" >> .config
 
-    # --- 4.4 内核配置逻辑 ---
+        # --- 4.4 内核配置逻辑 ---
     - name: (Kernel 4.4) Configure Target
       if: env.KERNEL_VER == '4.4'
       run: |
@@ -161,9 +161,15 @@ jobs:
         
         echo "Modifying config: $CONFIG_FILE"
         if [ -f "$CONFIG_FILE" ]; then
+            # 开启硬件加速
             sed -i 's/CONFIG_FIRMWARE_ENABLE_FLOWOFFLOAD=n/CONFIG_FIRMWARE_ENABLE_FLOWOFFLOAD=y/g' $CONFIG_FILE
+            
+            # [新增] 强制写入开启 AdGuard Home 的指令
+            sed -i '/CONFIG_FIRMWARE_INCLUDE_ADGUARDHOME/d' $CONFIG_FILE
+            echo "CONFIG_FIRMWARE_INCLUDE_ADGUARDHOME=y" >> $CONFIG_FILE
+            
+            # [修改] 阉割不需要的插件，已将 OPENVPN 从此名单中移除以保留它
             for APP in ARIA TRANSMISSION SMARTDNS TROJAN; do
-                sed -i "s/CONFIG_FIRMWARE_INCLUDE_ADGUARDHOME=n/CONFIG_FIRMWARE_INCLUDE_ADGUARDHOME=y/g" $CONFIG_FILE
                 sed -i "s/CONFIG_FIRMWARE_INCLUDE_${APP}=y/CONFIG_FIRMWARE_INCLUDE_${APP}=n/g" $CONFIG_FILE
             done
         else
