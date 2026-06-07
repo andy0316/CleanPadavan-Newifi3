@@ -162,7 +162,8 @@ jobs:
         echo "Modifying config: $CONFIG_FILE"
         if [ -f "$CONFIG_FILE" ]; then
             sed -i 's/CONFIG_FIRMWARE_ENABLE_FLOWOFFLOAD=n/CONFIG_FIRMWARE_ENABLE_FLOWOFFLOAD=y/g' $CONFIG_FILE
-            for APP in ARIA TRANSMISSION OPENVPN SMARTDNS TROJAN; do
+            for APP in ARIA TRANSMISSION SMARTDNS TROJAN; do
+                sed -i "s/CONFIG_FIRMWARE_INCLUDE_ADGUARDHOME=n/CONFIG_FIRMWARE_INCLUDE_ADGUARDHOME=y/g" $CONFIG_FILE
                 sed -i "s/CONFIG_FIRMWARE_INCLUDE_${APP}=y/CONFIG_FIRMWARE_INCLUDE_${APP}=n/g" $CONFIG_FILE
             done
         else
